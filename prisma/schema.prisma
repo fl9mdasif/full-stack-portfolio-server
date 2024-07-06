@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
   provider = "prisma-client-js"
@@ -20,16 +15,49 @@ model User {
   contactNumber   String             
   password        String
   role            UserRole         @default(USER)
-  status          UserStatus       @default(ACTIVE)
+  status          Status       @default(ACTIVE)
   address         String
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   @@map("users")
 }
 
+model Project {
+  id                     String         @id @default(uuid())
+  title                  String         
+  des                    String
+  img                    String?
+  link                   String
+  client                 String?
+  server                 String?
+ 
+  status                 Status @default(ACTIVE)
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime       @updatedAt
+
+ 
+  @@map("projects")
+}
 
 
-enum UserStatus {
+model Blog{
+  id                    String         @id @default(uuid())
+  title                 String
+  description           String
+  publish_date          String
+  author_name           String
+  blog_image            String
+  total_likes           String 
+
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime       @updatedAt
+
+  @@map("blogs")
+}
+
+
+
+enum Status {
   ACTIVE
   BLOCKED
 }

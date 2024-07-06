@@ -2,15 +2,14 @@ import { Prisma } from "@prisma/client";
 import { paginationHelper } from "../../../helpers/paginationHelper";
 import prisma from "../../../shared/prisma";
 import { TPaginationOptions } from "../../interface/pagination";
-import { TPetFilterableFields, TPets } from "./interface.pet";
-import { petSearchAbleFields } from "./constant.pet";
+import { petSearchAbleFields } from "../project/constant.project";
 
-const createPet = async (data: any) => {
-  const createPet = await prisma.pet.create({
+const createBlog = async (data: any) => {
+  const createBlog = await prisma.blog.create({
     data,
   });
 
-  return createPet;
+  return createBlog;
 };
 
 const getAllFromDB = async (params: any, options: TPaginationOptions) => {
@@ -19,14 +18,14 @@ const getAllFromDB = async (params: any, options: TPaginationOptions) => {
 
   // console.log("s", searchTerm, "f: ", filterData);
 
-  const andConditions: Prisma.PetWhereInput[] = [];
-  andConditions.push({
-    petAdoptionStatus: false,
-  });
+  const andConditions: Prisma.BlogWhereInput[] = [];
+  // andConditions.push({
+  //   status: "ACTIVE",
+  // });
 
   if (searchTerm) {
     andConditions.push({
-      OR: petSearchAbleFields.map((field) => ({
+      OR: petSearchAbleFields.map((field: any) => ({
         [field]: {
           contains: searchTerm,
           mode: "insensitive",
@@ -43,10 +42,10 @@ const getAllFromDB = async (params: any, options: TPaginationOptions) => {
     }));
     andConditions.push(...filterConditions);
   }
-  const whereConditions: Prisma.PetWhereInput =
+  const whereConditions: Prisma.BlogWhereInput =
     andConditions.length > 0 ? { AND: andConditions } : {};
 
-  const result = await prisma.pet.findMany({
+  const result = await prisma.blog.findMany({
     where: whereConditions,
     // adoptionStatus: false,
     skip,
@@ -61,7 +60,7 @@ const getAllFromDB = async (params: any, options: TPaginationOptions) => {
           },
   });
 
-  const total = await prisma.pet.count({
+  const total = await prisma.blog.count({
     where: whereConditions,
   });
 
@@ -75,17 +74,24 @@ const getAllFromDB = async (params: any, options: TPaginationOptions) => {
   };
 };
 
-const updateIntoDB = async (
-  id: string,
-  data: Partial<TPets>
-): Promise<TPets> => {
-  await prisma.pet.findUniqueOrThrow({
+const getSingleProject = async (id: string) => {
+  const result = await prisma.blog.findUniqueOrThrow({
     where: {
       id,
     },
   });
 
-  const result = await prisma.pet.update({
+  return result;
+};
+
+const updateIntoDB = async (id: string, data: any): Promise<any> => {
+  await prisma.blog.findUniqueOrThrow({
+    where: {
+      id,
+    },
+  });
+
+  const result = await prisma.blog.update({
     where: {
       id,
     },
@@ -95,24 +101,14 @@ const updateIntoDB = async (
   return result;
 };
 
-const getSinglePet = async (id: string) => {
-  const result = await prisma.pet.findUniqueOrThrow({
-    where: {
-      id,
-    },
-  });
-
-  return result;
-};
-
 const deleteFromDB = async (id: string) => {
-  await prisma.pet.findUniqueOrThrow({
+  await prisma.blog.findUniqueOrThrow({
     where: {
       id,
     },
   });
 
-  const result = await prisma.pet.delete({
+  const result = await prisma.blog.delete({
     where: {
       id,
     },
@@ -121,10 +117,10 @@ const deleteFromDB = async (id: string) => {
   return result;
 };
 
-export const PetService = {
-  createPet,
+export const BlogService = {
+  createBlog,
   getAllFromDB,
   deleteFromDB,
   updateIntoDB,
-  getSinglePet,
+  getSingleProject,
 };

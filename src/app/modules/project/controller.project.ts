@@ -1,17 +1,18 @@
 import { Request, Response } from "express";
 import catchAsync from "../../../shared/catchAsync";
-import { PetService } from "./service.pet";
 import sendResponse from "../../../shared/sendResponse";
 import httpStatus from "http-status";
 import pick from "../../../shared/pick";
-import { petFilterableFields } from "./constant.pet";
+import { petFilterableFields } from "./constant.project";
+import { ProjectService } from "./service.project";
 
-const createPet = catchAsync(async (req: Request, res: Response) => {
-  const result = await PetService.createPet(req.body);
+// create
+const createProject = catchAsync(async (req: Request, res: Response) => {
+  const result = await ProjectService.createProject(req.body);
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
     success: true,
-    message: "Pet added successfully",
+    message: "project created successfully",
     data: result,
   });
 });
@@ -21,58 +22,57 @@ const getAllFromDB = catchAsync(async (req, res, next) => {
   const options = pick(req.query, ["limit", "page", "sortBy", "sortOrder"]);
   // console.log("c", filters);
 
-  const result = await PetService.getAllFromDB(filters, options);
+  const result = await ProjectService.getAllFromDB(filters, options);
+
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Pets retrieved successfully!",
+    message: "Projects retrieved successfully!",
     meta: result.meta,
     data: result.data,
   });
 });
 
-const updateIntoDB = catchAsync(async (req, res, next) => {
-  const { petId } = req.params;
+const getSingleProject = catchAsync(async (req, res, next) => {
+  const { projectId } = req.params;
 
-  const result = await PetService.updateIntoDB(petId, req.body);
+  const result = await ProjectService.getSingleProject(projectId);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Pet profile updated successfully",
+    message: "Single project retrieved successfully",
     data: result,
   });
 });
 
-const getSinglePet = catchAsync(async (req, res, next) => {
-  // console.log('params',req.params);
+const updateIntoDB = catchAsync(async (req, res, next) => {
+  const { projectId } = req.params;
 
-  const { petId } = req.params;
-
-  const result = await PetService.getSinglePet(petId);
+  const result = await ProjectService.updateIntoDB(projectId, req.body);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Single pet retrieved successfully",
+    message: "Projects updated successfully",
     data: result,
   });
 });
 
 const deleteFromDB = catchAsync(async (req, res, next) => {
-  const { petId } = req.params;
+  const { projectId } = req.params;
 
-  const result = await PetService.deleteFromDB(petId);
+  const result = await ProjectService.deleteFromDB(projectId);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Pet deleted successfully",
+    message: "project deleted successfully",
     data: result,
   });
 });
 
-export const PetController = {
+export const ProjectController = {
   getAllFromDB,
-  getSinglePet,
+  getSingleProject,
   updateIntoDB,
   deleteFromDB,
-  createPet,
+  createProject,
 };
